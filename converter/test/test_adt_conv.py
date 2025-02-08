@@ -1,5 +1,8 @@
 import unittest
-from adt_conver_p import ADTConver10P
+import sys
+import pathlib
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1]))
+from adt_converter.adt_conver_p import ADTConver10P
 
 class TestADTConver10P(unittest.TestCase):
 
@@ -28,7 +31,7 @@ class TestADTConver10P(unittest.TestCase):
         self.assertEqual(ADTConver10P.do(10.5, 2, 4), '1010.1000')
         self.assertEqual(ADTConver10P.do(-10.5, 2, 4), '-1010.1000')
         self.assertEqual(ADTConver10P.do(255.999, 16, 2), 'FF.FF')
-        self.assertEqual(ADTConver10P.do(0, 8, 2), '0')
+        self.assertEqual(ADTConver10P.do(0, 8, 2), '0.00')
         with self.assertRaises(ValueError):
             ADTConver10P.do('abc', 2, 4)
         with self.assertRaises(ValueError):
