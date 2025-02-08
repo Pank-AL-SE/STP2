@@ -2,7 +2,7 @@ import unittest
 import sys
 import pathlib
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1]))
-from adt_converter.adt_conver_p import ADTConver10P
+from libs.adt_conver_p import ADTConver10P
 
 class TestADTConver10P(unittest.TestCase):
 
