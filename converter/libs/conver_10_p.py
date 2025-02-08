@@ -2,47 +2,48 @@ class Conver10P:
     
     @staticmethod
     def dval(P_num, P):
-        # Проверяем наличие знака минуса
+        # Проверка на отрицательное число
         is_negative = False
         if P_num.startswith('-'):
             is_negative = True
-            P_num = P_num[1:]  # Убираем знак минус
+            P_num = P_num[1:]  # Убираем символ '-'
         
-        # Находим точку, отделяющую целую и дробную части
-        point_index = P_num.find('.')
+        if '.' in P_num:
+            integer_part, fractional_part = P_num.split('.')
+        else:
+            integer_part, fractional_part = P_num, ''
         
-        if point_index == -1:
-            return Conver10P.__convert(P_num, P, 1)
+        # Преобразование целой части
+        integer_value = Conver10P.__convert(integer_part, P, 1)
         
-        integer_part = P_num[:point_index]
-        fractional_part = P_num[point_index + 1:]
+        # Преобразование дробной части
+        fractional_value = 0.0
+        if fractional_part:
+            fractional_weight = 1.0 / P  # Начинаем с P^{-1}
+            for ch in fractional_part:
+                fractional_value += Conver10P.__char_to_num(ch) * fractional_weight
+                fractional_weight /= P  # Уменьшаем вес для следующего разряда
         
-        result = Conver10P.__convert(integer_part, P, 1) + Conver10P.__convert(fractional_part, P, 1 / P)
+        # Учитываем знак числа
+        result = integer_value + fractional_value
+        if is_negative:
+            result = -result
         
-        # Возвращаем результат с учетом знака
-        return -result if is_negative else result
-    
-    @staticmethod
-    def __convert(P_num, P, weight):
-        result = 0
-        for digit in reversed(P_num):
-            result += Conver10P.__char_to_num(digit) * weight
-            weight *= P
-            
         return result
     
     @staticmethod
+    def __convert(P_num, P, weight):
+        result = 0.0
+        for ch in P_num:
+            result = result * P + Conver10P.__char_to_num(ch)
+        return result / weight
+    
+    @staticmethod
     def __char_to_num(ch):
-        if '0' <= ch <= '9':
-            return ord(ch) - ord('0')  # Если это цифра от 0 до 9
-        elif 'a' <= ch <= 'z':  # Для букв a-z
-            return ord(ch) - ord('a') + 10
-        elif 'A' <= ch <= 'Z':  # Для букв A-Z
-            return ord(ch) - ord('A') + 10
+        if ch.isdigit():
+            return int(ch)
         else:
-            raise ValueError("Некорректный символ")
-
-
-# Пример использования
-result = Conver10P.dval("-A5.E", 16)
-print(result)  # Вывод: 165.875
+            return ord(ch.upper()) - ord('A') + 10
+print(Conver10P.dval("A5.E", 16))  # Вывод: 165.875
+print(Conver10P.dval("-FF.A", 16))  # Вывод: 255.625
+print(Conver10P.dval("11.1", 2))   # Вывод: 3.5
